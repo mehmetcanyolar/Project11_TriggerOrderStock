@@ -20,7 +20,8 @@ namespace Project11_TriggerOrderStock
             Console.WriteLine("2- Sipariş Listesi");
             Console.WriteLine("3-Kasa Durumu");
             Console.WriteLine("4-Yeni Ürün Satışı");
-            Console.WriteLine("5-Ürün Stok Güncelleme");
+            Console.WriteLine("5-İşlem Sayacı");
+            Console.WriteLine("6-Ürün Stok Güncelleme");
             Console.WriteLine();
             Console.WriteLine("---------------------------");
             Console.WriteLine();
@@ -66,19 +67,42 @@ namespace Project11_TriggerOrderStock
 
                 Console.Write("Müşteri Adı: ");
                 string customer = Console.ReadLine();
-                Console.Write(" Ürün Id: ");
+                Console.Write("Ürün Id: ");
                 int productid = int.Parse(Console.ReadLine());
                 Console.Write("Ürün Adedi: ");
                 int quantity = int.Parse(Console.ReadLine());
+
+                Console.WriteLine();
+                Console.WriteLine("---- Ürün Bilgileri ----");
+                Console.WriteLine();
+                var productName=dbEntity.TblProducts.Where(x=>x.ProductId==productid).Select(x=>x.ProductName).FirstOrDefault();
+                Console.WriteLine("Ürün Adı: "+productName);
 
                 var productUnitPrice = dbEntity.TblProducts.Where(x=> x.ProductId == productid).Select(y=>y.ProductPrice).FirstOrDefault();
               
                 Console.WriteLine("Ürünün Birim Fiyatı: "+ productUnitPrice+"TL");
 
-              decimal totalPrice = quantity+decimal.Parse(productUnitPrice.ToString());
+              decimal totalPrice = decimal.Parse((quantity*productUnitPrice).ToString());
                // Console.WriteLine("Ürünün Total Fiyatı: "+productUnitPrice*quantity+"TL");
                 Console.WriteLine("Ürünün Total Fiyatı: "+totalPrice+"TL");
+                Console.WriteLine();
                
+                
+                TblOrder tblOrder = new TblOrder();
+                tblOrder.UnitPrice=productUnitPrice;
+                tblOrder.Quantity=quantity;
+                tblOrder.ProductId=productid;
+                tblOrder.TotalPrice=totalPrice;
+               tblOrder.Customer=customer;
+
+                dbEntity.TblOrders.Add(tblOrder);
+                dbEntity.SaveChanges();
+            }
+
+            if (number == "5") 
+            {
+                var value=dbEntity.TblProcesses.Select(x=>x.Process).FirstOrDefault();
+                  
             }
 
             Console.Read();
